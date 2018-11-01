@@ -1,0 +1,59 @@
+buildscript {
+    ext.kotlin_version = '1.2.51'
+    ext.tornado_version = '1.7.16'
+    ext.jfoenix_version = '8.0.4'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.60'
+}
+
+group 'com.example.regexchallenge'
+apply plugin: 'kotlin'
+
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url 'https://mvnrepository.com/artifac/' }
+    maven { url "https://dl.bintray.com/kotlin/exposed" }
+    maven { url "https://dl.bintray.com/dua3/public" }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    //JFoenix
+    compile "com.jfoenix:jfoenix:$jfoenix_version"
+
+    //FontAwesomeFX
+    compile "de.jensd:fontawesomefx-commons:9.1.2-jpms"
+    compile "de.jensd:fontawesomefx-materialicons:2.2.0-9.1.2-jpms"
+    compile "de.jensd:fontawesomefx-icons525:4.2.0-9.1.2-jpms"
+    compile "de.jensd:fontawesomefx-materialdesignfont:1.7.22-4"
+
+    //Tornado FX
+    compile "no.tornado:tornadofx:$tornado_version"
+
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
