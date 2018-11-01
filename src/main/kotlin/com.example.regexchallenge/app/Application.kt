@@ -22,7 +22,6 @@ fun main(args: Array<String>) {
 
 class MainView : View() {
     var directories = FXCollections.observableArrayList<Directory>()
-    var dirList = ArrayList<String>()
 
     init {
         var fileReader: BufferedReader? = null
@@ -33,7 +32,8 @@ class MainView : View() {
 
             line = fileReader.readLine()
             while (line != null) {
-                parseDirName(line)
+                val nextDirectory = parseDirName(line)
+                if(nextDirectory!= null) directories.add(nextDirectory)
                 line = fileReader.readLine()
             }
         } catch (e: Exception) {
@@ -63,7 +63,7 @@ class MainView : View() {
         }
     }
 
-    fun parseDirName(dirName: String) {
+    fun parseDirName(dirName: String): Directory? {
         var seperators = 0
         for (char in dirName) {
             if (char.equals('_')) seperators++
@@ -72,29 +72,26 @@ class MainView : View() {
             0 -> {
                 val regex = "(([a-z]+)-([a-z]+)-([a-z]+)-([a-z]+))".toRegex()
                 regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, match1, resource, langCode1, langCode2) ->
-                    directories.add(
-                            Directory(name = enitreMatch,
-                                    resourceType = resource, langCode = langCode1 + "-" + langCode2))
+                    return Directory(name = enitreMatch,
+                            resourceType = resource, langCode = langCode1 + "-" + langCode2)
                 }
             }
 
             1 -> {
                 val regex = "(([a-z]+)-([a-z]+)_([a-z]+)-([a-z]+))".toRegex()
                 regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, match1, bookId, resourceType, langCode) ->
-                    directories.add(
-                            Directory(name = enitreMatch,
-                                    resourceType = resourceType,
-                                    langCode = langCode, book_id = bookId))
+                    return Directory(name = enitreMatch,
+                            resourceType = resourceType,
+                            langCode = langCode, book_id = bookId)
                 }
             }
 
             2 -> {
                 val regex = "(([a-z]+)_([a-z0-9]+)_([a-z]+))".toRegex()
                 regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, langCode, match3, resourceType) ->
-                    directories.add(
-                            Directory(name = enitreMatch,
-                                    resourceType = resourceType,
-                                    langCode = langCode))
+                    return Directory(name = enitreMatch,
+                            resourceType = resourceType,
+                            langCode = langCode)
                 }
             }
 
@@ -102,40 +99,37 @@ class MainView : View() {
                 val regex = "(([a-z-0-9]+)_([a-z0-9]+)_([a-z]+)_([a-z]+))".toRegex()
                 regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, langCode, bookId, match3, match4) ->
                     if (match4.length > 2) {
-                        directories.add(
-                                Directory(name = enitreMatch, resourceType = match4,
-                                        langCode = langCode, book_id = bookId))
+                        return Directory(name = enitreMatch, resourceType = match4,
+                                langCode = langCode, book_id = bookId)
                     } else {
-                        directories.add(
-                                Directory(name = enitreMatch, resourceType = match3, level = match4.last().toString(),
-                                        langCode = langCode, book_id = bookId))
+                        return Directory(name = enitreMatch, resourceType = match3, level = match4.last().toString(),
+                                langCode = langCode, book_id = bookId)
                     }
                 }
             }
             4 -> {
                 val regex = "(([a-z-0-9]+)?_([a-z0-9]+)_([a-z]+)?_([a-z]{3})?_([a-z0-9]{2}))".toRegex()
-                regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, langCode, bookId,x, resourceType, level) ->
-                    directories.add(
-                            Directory(name = enitreMatch,
-                                    level = level.last().toString(),
-                                    book_id = bookId,
-                                    resourceType = resourceType,
-                                    langCode = langCode))
+                regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, langCode, bookId, x, resourceType, level) ->
+                    return Directory(name = enitreMatch,
+                            level = level.last().toString(),
+                            book_id = bookId,
+                            resourceType = resourceType,
+                            langCode = langCode)
                 }
             }
 
             5 -> {
                 val regex = "(([a-z-0-9]+)_([a-z0-9]+)_([a-z]+)_([a-z]+)_([a-z]+)_([0-9]))".toRegex()
-                regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, langCode, bookId,x, resourceType, y, level) ->
-                    directories.add(
-                            Directory(name = enitreMatch,
+                regex.matchEntire(dirName)?.destructured?.let { (enitreMatch, langCode, bookId, x, resourceType, y, level) ->
+                    return Directory(name = enitreMatch,
                                     level = level,
                                     book_id = bookId,
                                     resourceType = resourceType,
-                                    langCode = langCode))
+                                    langCode = langCode)
                 }
             }
         }
+        return null
     }
 }
 
